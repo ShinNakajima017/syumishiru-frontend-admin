@@ -1,44 +1,46 @@
 /**
- * MUIのProviderをまとめたコンポーネント
+ * アプリ全体の Provider をまとめたコンポーネント
  *
  * ## なぜこのファイルが必要か
- * - MUI を Next.js App Router で使うには複数の Provider が必要
+ * - MUI、React Query など複数の Provider が必要
  * - それらを1つのコンポーネントにまとめることで layout.tsx の可読性が上がる
- * - 将来 Provider が増えても（React Query 等）、ここで一元管理できる
+ * - Provider の追加・削除がここで一元管理できる
  */
 'use client';
 
+import { useState } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
+import { QueryClientProvider } from '@tanstack/react-query';
 import theme from '@/lib/theme';
+import { makeQueryClient } from '@/lib/query-client';
 
 type ThemeRegistryProps = {
   children: React.ReactNode;
 };
 
 export default function ThemeRegistry({ children }: ThemeRegistryProps) {
+  /**
+   * QueryClient を useState で保持する理由:
+   * - コンポーネントの再レンダリングで新しいインスタンスが作られるのを防ぐ
+   * - 1つのインスタンスをアプリ全体で共有することでキャッシュが効く
+   */
+  const [queryClient] = useState(() => makeQueryClient());
+
   return (
-    /**
-     * AppRouterCacheProvider
-     * - Emotion（MUI が内部で使う CSS-in-JS ライブラリ）のキャッシュを管理
-     * - MUI 公式が Next.js App Router で推奨している構成
-     */
     <AppRouterCacheProvider options={{ key: 'mui' }}>
       {/**
-       * ThemeProvider
-       * - 定義したテーマを全ての子コンポーネントに適用
-       * - MUI コンポーネントがテーマの色やフォントを参照できるようになる
+       * QueryClientProvider
+       * - React Query の機能を全コンポーネントで使えるようにする
+       * - useQuery, useMutation などのフックがどこでも使えるようになる
        */}
-      <ThemeProvider theme={theme}>
-        {/**
-         * CssBaseline
-         * - ブラウザ間のスタイル差異をリセット
-         * - MUI 推奨のベーススタイルを適用
-         */}
-        <CssBaseline />
-        {children}
-      </ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          {children}
+        </ThemeProvider>
+      </QueryClientProvider>
     </AppRouterCacheProvider>
   );
 }
