@@ -20,7 +20,17 @@
     ],
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    // 配列・オブジェクトのインデックスアクセス時に undefined の可能性を考慮させる
+    // → arr[0] の型が T | undefined になり、実行時エラーを未然に防げる
+    "noUncheckedIndexedAccess": true,
+    // 未使用の変数・パラメータをコンパイルエラーにする
+    // → 不要コードが残らず、コードベースがクリーンに保たれる
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    // ファイル名の大文字小文字を厳格にチェック
+    // → macOS(区別しない)で開発 → Linux(区別する)でデプロイ時のバグを防ぐ
+    "forceConsistentCasingInFileNames": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
