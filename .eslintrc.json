@@ -1,3 +1,8 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript", "prettier"]
+  "extends": ["next/core-web-vitals", "next/typescript", "prettier"],
+  "rules": {
+    // any 型の使用を禁止
+    // どうしても必要な場合は unknown を使い、型ガードで絞り込む
+    "@typescript-eslint/no-explicit-any": "error"
+  }
 }
