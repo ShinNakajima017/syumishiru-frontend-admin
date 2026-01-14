@@ -4,6 +4,12 @@
  * ## このファイルの役割
  * - アプリ全体の共通レイアウトを定義
  * - 全ページ共通の Provider（テーマ等）をここでラップ
+ *
+ * ## エラーハンドリングについて
+ * Next.js App Router では、エラーハンドリングは以下のファイルで行う：
+ * - error.tsx: ページ/コンポーネントのランタイムエラー
+ * - not-found.tsx: 404エラー
+ * - global-error.tsx: このlayout.tsx自体のエラー
  */
 import type { Metadata } from 'next';
 import ThemeRegistry from '@/components/providers/ThemeRegistry';
